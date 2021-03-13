@@ -2,9 +2,9 @@ from tkinter import *
 from tkinter import ttk
 import sqlite3
 
-
 class Encaython:
     db_name='database.db'
+
     def __init__(self,ventana):
         self.ventana=ventana
         ventana.title('Encaython')
@@ -58,12 +58,40 @@ class Encaython:
         # posicion celda del titulo, titulo de la columna, centrado de la columna 
         self.tabla.heading('#0',text='Instruccion', anchor=CENTER)
 
+        self.obtener_titulos()
+
+
     def hacer_consluta(self,query,parametros=()):
         conn=sqlite3.connect(self.db_name)
         cursor=conn.cursor()
         resultado=cursor.execute(query,parametros)
         conn.commit()
         return resultado
+
+    def crea_tabla(self):
+        query='''
+        CREATE TABLE IF NOT EXISTS "sql" (
+            "id"	INTEGER NOT NULL,
+            "titulo"	TEXT,
+            "codigo"	TEXT,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        )'''
+        tabla_db=self.hacer_consluta(query)
+        return tabla_db
+
+    def obtener_titulos(self):
+        # obtengo los elementos existentes en la tabla
+        datos_tabla=self.tabla.get_children()
+        #limpio la tabla
+        for i in datos_tabla:
+            self.tabla.delete(i)
+        # creo consulta 
+        query='SELECT *FROM sql ORDER BY titulo'
+        # llamo a la funcion hacer consulta y le paso el parametro
+        filas_db=self.hacer_consluta(query)
+        # recorro los datos devueltos por la consulta y los recorro para agregarlos a la tabla
+        for fila in filas_db:
+            self.tabla.insert('',0,text=fila[1])
 
 if __name__ == '__main__':
     ventana = Tk()
