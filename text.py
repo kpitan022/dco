@@ -4,6 +4,7 @@ import sqlite3
 
 
 class Encaython:
+    db_name='database.db'
     def __init__(self,ventana):
         self.ventana=ventana
         ventana.title('Encaython')
@@ -56,6 +57,13 @@ class Encaython:
         #creamos encabezado de la tabla
         # posicion celda del titulo, titulo de la columna, centrado de la columna 
         self.tabla.heading('#0',text='Instruccion', anchor=CENTER)
+
+    def hacer_consluta(self,query,parametros=()):
+        conn=sqlite3.connect(self.db_name)
+        cursor=conn.cursor()
+        resultado=cursor.execute(query,parametros)
+        conn.commit()
+        return resultado
 
 if __name__ == '__main__':
     ventana = Tk()
