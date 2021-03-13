@@ -109,7 +109,7 @@ class Encaython:
         #borramos contenido de los entrys
         self.e_titulo.delete(0,END)
         #TODO borrar el contenido del text
-        self.e_codigo.set(1,END)
+        self.e_codigo.delete(1.0,END)
 
 if __name__ == '__main__':
     ventana = Tk()
