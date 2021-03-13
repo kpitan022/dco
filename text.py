@@ -50,7 +50,7 @@ class Encaython:
         self.e_codigo=Text(frame)
         self.e_codigo.grid(row=2, column=1)
 
-        Button(frame,text='Agregar').grid(row=4, columnspan=2,sticky=W+E)
+        Button(frame,text='Agregar').grid(row=4, columnspan=2,pady=5,sticky=W+E)
 
         self.tabla=ttk.Treeview(frame,columns=1)
         self.tabla.grid(row=5, columnspan=2,sticky=W+E,padx=20,pady=20)
@@ -91,7 +91,8 @@ class Encaython:
         filas_db=self.hacer_consluta(query)
         # recorro los datos devueltos por la consulta y los recorro para agregarlos a la tabla
         for fila in filas_db:
-            self.tabla.insert('',0,text=fila[1])
+            print(fila)
+            self.tabla.insert('',0,text=fila[1],values=fila[2])
 
 if __name__ == '__main__':
     ventana = Tk()
