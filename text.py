@@ -52,8 +52,8 @@ class Encaython:
 
         Button(frame,text='Agregar').grid(row=4, columnspan=2,sticky=W+E)
 
-        self.tabla=ttk.Treeview(frame,height=10,columns=1)
-        self.tabla.grid(row=5, columnspan=2,sticky=W+E,padx=20)
+        self.tabla=ttk.Treeview(frame,columns=1)
+        self.tabla.grid(row=5, columnspan=2,sticky=W+E,padx=20,pady=20)
         #creamos encabezado de la tabla
         # posicion celda del titulo, titulo de la columna, centrado de la columna 
         self.tabla.heading('#0',text='Instruccion', anchor=CENTER)
