@@ -52,6 +52,10 @@ class Encaython:
 
         Button(frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
 
+        # mensajes
+        self.mensaje=Label(frame,text='',fg='red',anchor=CENTER)
+        self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
+
         self.tabla=ttk.Treeview(frame,columns=1)
         self.tabla.grid(row=5, columnspan=2,sticky=W+E,padx=20,pady=20)
         #creamos encabezado de la tabla
@@ -94,13 +98,18 @@ class Encaython:
             print(fila)
             self.tabla.insert('',0,text=fila[1],values=fila[2])
 
+    # TODO hacer funcion para validar form minuto 53
     def agregar_contenido(self):
         #genero la query
         query= 'INSERT INTO sql VALUES(NULL,?,?)'
         parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END))
         self.hacer_consluta(query,parametros)
         self.obtener_titulos()
-        print('datos guardados')
+        self.mensaje['text']=f'El contenido {self.e_titulo.get()} fue agregado correctamente'
+        #borramos contenido de los entrys
+        self.e_titulo.delete(0,END)
+        #TODO borrar el contenido del text
+        self.e_codigo.delete(1.0,END)
 
 if __name__ == '__main__':
     ventana = Tk()
