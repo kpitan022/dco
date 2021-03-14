@@ -9,7 +9,7 @@ class Encaython:
         self.ventana=ventana
         ventana.title('Encaython')
 
-        #------- creamos frame contenedor-
+        #------- creamos self.frame contenedor-
         contenedor=Frame(ventana)
         contenedor.pack(fill=BOTH,expand=1)
         #------- creamos canvas -------
@@ -31,38 +31,52 @@ class Encaython:
 
         root= Frame(mi_canvas)
 
-        # ---------- agregamos este ultimo frame al canvas
+        # ---------- agregamos este ultimo self.frame al canvas
         mi_canvas.create_window((0,0), window=root,anchor='nw')
 
 
         #----------------aqui va el codigo (ejemplo de prueba)
+        #  ventana cargar contenido
         
-        frame=LabelFrame(root, text='Cargar contenido')
-        frame.grid(row=0, column=0,columnspan=3,pady=20,padx=20)
+        self.frame=LabelFrame(root, text='Cargar contenido')
+        # self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
-        Label(frame,text='Titulo:').grid(row=1, column=0)
-        self.e_titulo=Entry(frame)
-        self.e_titulo.grid(row=1,column=1,sticky=W+E)
+        Label(self.frame,text='Titulo:').grid(row=0, column=0)
+        self.e_titulo=Entry(self.frame)
+        self.e_titulo.grid(row=0,column=1,sticky=W+E)
         self.e_titulo.focus()
         
         # input codigo
-        Label(frame,text='Codigo:').grid(row=2, column=0)
-        self.e_codigo=Text(frame)
-        self.e_codigo.grid(row=2, column=1)
+        Label(self.frame,text='Codigo:').grid(row=1, column=0)
+        self.e_codigo=Text(self.frame)
+        self.e_codigo.grid(row=1, column=1)
 
-        Button(frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
+                # input codigo
+        Label(self.frame,text='Resultado:').grid(row=2, column=0)
+        self.e_resultado=Text(self.frame)
+        self.e_resultado.grid(row=2, column=1)
+
+        Button(root,text='Agregar Contenido',command=self.menu_contenido).grid(row=0, column=0,pady=5)
+        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
 
         # mensajes
-        self.mensaje=Label(frame,text='',fg='red',anchor=CENTER)
+        self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
         self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
 
-        self.tabla=ttk.Treeview(frame,columns=1)
-        self.tabla.grid(row=5, columnspan=2,sticky=W+E,padx=20,pady=20)
+        self.tabla=ttk.Treeview(self.frame,columns=1)
+        self.tabla.grid(row=0,column=3, columnspan=2,rowspan=2,sticky=W+E+N+S,padx=20)
         #creamos encabezado de la tabla
         # posicion celda del titulo, titulo de la columna, centrado de la columna 
         self.tabla.heading('#0',text='Instruccion', anchor=CENTER)
 
         self.obtener_titulos()
+
+        #    ventana ver contenido
+        
+
+
+    def menu_contenido(self):
+        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
 
 
     def hacer_consluta(self,query,parametros=()):
