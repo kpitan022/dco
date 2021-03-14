@@ -68,6 +68,7 @@ class Encaython:
         self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
 
 
+        self.crea_tabla()
         self.obtener_titulos()
 
     def menu_contenido(self):
@@ -106,6 +107,7 @@ class Encaython:
         return self.boxing
 
     # TODO hacer funcion para validar form minuto 53
+    
     def agregar_contenido(self):
         #genero la query
         query= 'INSERT INTO sql VALUES(NULL,?,?)'
@@ -117,6 +119,12 @@ class Encaython:
         self.e_titulo.delete(0,END)
         #TODO borrar el contenido del text
         self.e_codigo.delete(1.0,END)
+
+    def listar_tablas(self):
+        query=f'''SELECT * FROM sqlite_master WHERE type = "table"'''
+        lista_tablas=self.hacer_consluta(query)
+        for lista in lista_tablas:
+            print(lista)
 
 if __name__ == '__main__':
     ventana = Tk()
