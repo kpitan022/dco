@@ -39,7 +39,7 @@ class Encaython:
         #  ventana cargar contenido
         
         self.frame=LabelFrame(root, text='Cargar contenido')
-        # self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
         Label(self.frame,text='Titulo:').grid(row=0, column=0)
         self.e_titulo=Entry(self.frame)
@@ -63,17 +63,12 @@ class Encaython:
         self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
         self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
 
-        self.tabla=ttk.Treeview(self.frame,columns=1)
-        self.tabla.grid(row=0,column=3, columnspan=2,rowspan=2,sticky=W+E+N+S,padx=20)
-        #creamos encabezado de la tabla
-        # posicion celda del titulo, titulo de la columna, centrado de la columna 
-        self.tabla.heading('#0',text='Instruccion', anchor=CENTER)
+        #    ventana ver contenido
+        self.listbox = Listbox(self.frame)
+        self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
+
 
         self.obtener_titulos()
-
-        #    ventana ver contenido
-        
-
 
     def menu_contenido(self):
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
@@ -98,19 +93,17 @@ class Encaython:
         return tabla_db
 
     def obtener_titulos(self):
-        # obtengo los elementos existentes en la tabla
-        datos_tabla=self.tabla.get_children()
-        #limpio la tabla
-        for i in datos_tabla:
-            self.tabla.delete(i)
-        # creo consulta 
+        self.boxing=[]
+        self.listbox.get(0, END)
+        self.listbox.delete(0,END)
         query='SELECT *FROM sql ORDER BY titulo'
         # llamo a la funcion hacer consulta y le paso el parametro
         filas_db=self.hacer_consluta(query)
         # recorro los datos devueltos por la consulta y los recorro para agregarlos a la tabla
         for fila in filas_db:
-            print(fila)
-            self.tabla.insert('',0,text=fila[1],values=fila[2])
+            self.boxing.append(fila[1])
+        self.listbox.insert(0, *self.boxing)
+        return self.boxing
 
     # TODO hacer funcion para validar form minuto 53
     def agregar_contenido(self):
