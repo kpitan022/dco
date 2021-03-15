@@ -147,19 +147,23 @@ class Encaython:
         self.listbox.insert(0, *self.boxing)
         return self.boxing
 
-    # TODO hacer funcion para validar form minuto 53
+    def validacion(self):
+        return len(self.e_titulo.get()) !=0 and len(self.e_codigo.get()) !=0 
+    
     def agregar_contenido(self):
-        #genero la query
-        query= 'INSERT INTO sql VALUES(NULL,?,?)'
-        parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END))
-        self.hacer_consluta(query,parametros)
-        self.obtener_titulos()
-        self.mensaje['text']=f'El contenido {self.e_titulo.get()} fue agregado correctamente'
-        #borramos contenido de los entrys
-        self.e_titulo.delete(0,END)
-        #TODO borrar el contenido del text
-        self.e_codigo.delete(1.0,END)
-        self.e_resultado.delete(1.0,END)
+        # valido los campos
+        if self.validacion():
+            #genero la query
+            query= 'INSERT INTO sql VALUES(NULL,?,?)'
+            parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END))
+            self.hacer_consluta(query,parametros)
+            self.obtener_titulos()
+            self.mensaje['text']=f'El contenido {self.e_titulo.get()} fue agregado correctamente'
+            #borramos contenido de los entrys
+            self.e_titulo.delete(0,END)
+            #TODO borrar el contenido del text
+            self.e_codigo.delete(1.0,END)
+            self.e_resultado.delete(1.0,END)
 
     def listar_tablas(self):
         query=f'''SELECT * FROM sqlite_master WHERE type = "table"'''
