@@ -33,16 +33,10 @@ class Encaython:
         #----------------aqui va el codigo (ejemplo de prueba)
         #  ventana cargar contenido
 
-        # botones futuro menu 
-        # menu=Frame(self.root)
-        # menu.grid(row=0, column=0,sticky=W)
-        # agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
-        # agrega.grid(row=1,column=0,pady=5,sticky=W)
-        # conten=Button(menu,text='Ver Contenido',command=self.menu_contenido)
-        # conten.grid(row=1, column=1,pady=5,sticky=W)
-        self.menu()
+        self.menu() #llamo los botones de menu
 
     def menu(self):
+        
         menu=Frame(self.root)
         menu.grid(row=0, column=0,sticky=W)
         agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
@@ -51,7 +45,14 @@ class Encaython:
         conten.grid(row=1, column=1,pady=5,sticky=W)
         
     def menu_contenido(self):
-        self.frame=LabelFrame(self.root, text='Ver contenido')
+        try:
+            agrega.destroy()
+        except:
+            pass
+        global contenido
+        contenido=Frame(self.root)
+        contenido.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        self.frame=LabelFrame(contenido, text='Ver contenido')
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
         Label(self.frame,text='Titulo:').grid(row=0, column=0)
@@ -67,13 +68,6 @@ class Encaython:
         Label(self.frame,text='Resultado:').grid(row=2, column=0)
         self.e_resultado=Text(self.frame,state='disabled',bg='gray')
         self.e_resultado.grid(row=2, column=1)
-
-        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
-
-        # mensajes
-        self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
-        self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
-
         #    ventana ver contenido
         self.listbox = Listbox(self.frame)
         self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
@@ -81,9 +75,16 @@ class Encaython:
 
         self.crea_tabla()
         self.obtener_titulos()
-    
+        
     def menu_agrega_contenido(self):
-        self.frame=LabelFrame(self.root, text='Cargar contenido')
+        try:
+            contenido.destroy()
+        except:
+            pass
+        global agrega
+        agrega=Frame(self.root)
+        agrega.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        self.frame=LabelFrame(agrega, text='Cargar contenido')
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
         Label(self.frame,text='Titulo:').grid(row=0, column=0)
@@ -101,7 +102,7 @@ class Encaython:
         self.e_resultado=Text(self.frame)
         self.e_resultado.grid(row=2, column=1)
 
-        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
+        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E)
 
         # mensajes
         self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
@@ -109,7 +110,7 @@ class Encaython:
 
         #    ventana ver contenido
         self.listbox = Listbox(self.frame)
-        self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
+        self.listbox.grid(row=1,column=3,rowspan=3,sticky=W+E+N+S,padx=20)
 
 
         self.crea_tabla()
@@ -147,7 +148,6 @@ class Encaython:
         return self.boxing
 
     # TODO hacer funcion para validar form minuto 53
-    
     def agregar_contenido(self):
         #genero la query
         query= 'INSERT INTO sql VALUES(NULL,?,?)'
@@ -159,12 +159,14 @@ class Encaython:
         self.e_titulo.delete(0,END)
         #TODO borrar el contenido del text
         self.e_codigo.delete(1.0,END)
+        self.e_resultado.delete(1.0,END)
 
     def listar_tablas(self):
         query=f'''SELECT * FROM sqlite_master WHERE type = "table"'''
         lista_tablas=self.hacer_consluta(query)
         for lista in lista_tablas:
             print(lista)
+
 
 if __name__ == '__main__':
     ventana = Tk()
