@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import sqlite3
+from tkinter.messagebox import *
 
 class Encaython:
     db_name='database.db'
@@ -104,10 +105,6 @@ class Encaython:
 
         Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E)
 
-        # mensajes
-        self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
-        self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
-
         #    ventana ver contenido
         self.listbox = Listbox(self.frame)
         self.listbox.grid(row=1,column=3,rowspan=3,sticky=W+E+N+S,padx=20)
@@ -148,7 +145,7 @@ class Encaython:
         return self.boxing
 
     def validacion(self):
-        return len(self.e_titulo.get()) !=0 and len(self.e_codigo.get()) !=0 
+        return len(self.e_titulo.get()) !=0 and len(self.e_codigo.get(1.0,END)) !=0 
     
     def agregar_contenido(self):
         # valido los campos
@@ -158,12 +155,14 @@ class Encaython:
             parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END))
             self.hacer_consluta(query,parametros)
             self.obtener_titulos()
-            self.mensaje['text']=f'El contenido {self.e_titulo.get()} fue agregado correctamente'
+            showinfo(title='Agregar', message=f'{self.e_titulo.get()} agregado correctamente')
             #borramos contenido de los entrys
             self.e_titulo.delete(0,END)
             #TODO borrar el contenido del text
-            self.e_codigo.delete(1.0,END)
+            self.e_codigo.delete(1.0,END) 
             self.e_resultado.delete(1.0,END)
+        else:
+            showerror(title='Error en formulario',message='Los campos título y código son requeridos, verifique los datos e inténtelo nuevamente')
 
     def listar_tablas(self):
         query=f'''SELECT * FROM sqlite_master WHERE type = "table"'''
