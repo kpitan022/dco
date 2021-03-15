@@ -5,7 +5,8 @@ import sqlite3
 from tkinter.messagebox import *
 
 class Encaython:
-    db_name='database.db'
+    # db_name='database.db'
+    db_name='database'
 
     def __init__(self,ventana):
         self.ventana=ventana
@@ -85,34 +86,60 @@ class Encaython:
     
     def menu_editar(self):
         self.editar()
-        
-        global editar
-        editar=Toplevel()
-        editar.title='Editar contenido'
-        self.frame=LabelFrame(editar, text='Editar contenido')
-        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        global contenedor2
+        contenedor2=Toplevel()
+        contenedor2.title='Editar contenido'
+
+        contenedor2.grid()
+
+        #------- creamos canvas -------
+        mi_canvas = Canvas(contenedor2)
+        mi_canvas.pack(side=LEFT,fill=BOTH,expand=1)
+
+
+        # ------- agregamos Scrollbar  a canvas 
+
+        mi_scrollbar = ttk.Scrollbar(contenedor2, orient=VERTICAL,command=mi_canvas.yview)
+        mi_scrollbar.pack(side=RIGHT, fill=Y)
+
+
+        #--------- configuro canvas ----
+        mi_canvas.configure(yscrollcommand=mi_scrollbar.set)
+        mi_canvas.bind('<Configure>', lambda e: mi_canvas.configure(scrollregion= mi_canvas.bbox('all')))
+
+        # ---------- creamos otro frame dentro de canvas
+        root= Frame(mi_canvas)
+
+        # ---------- agregamos este ultimo frame al canvas
+        mi_canvas.create_window((0,0), window=root,anchor='nw')
+
+
+        #----------------aqui va el codigo (ejemplo de prueba)
+
+        self.frame2=LabelFrame(root, text='Editar contenido')
+        self.frame2.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
-        Label(self.frame,text='Titulo:').grid(row=0, column=0)
-        self.e_titulo=Entry(self.frame)
-        self.e_titulo.insert(0,self.edit_tit)
-        self.e_titulo.grid(row=0,column=1,sticky=W+E)
+        Label(self.frame2,text='Titulo:').grid(row=0, column=0)
+        self.e_titulo2=Entry(self.frame2)
+        self.e_titulo2.insert(0,self.edit_tit)
+        self.e_titulo2.grid(row=0,column=1,sticky=W+E)
         
         # input codigo
-        Label(self.frame,text='Codigo:').grid(row=1, column=0)
-        self.e_codigo=Text(self.frame)
-        self.e_codigo.insert(INSERT,self.edit_codigo)
-        self.e_codigo.grid(row=1, column=1)
+        Label(self.frame2,text='Codigo:').grid(row=1, column=0)
+        self.e_codigo2=Text(self.frame2)
+        self.e_codigo2.insert(INSERT,self.edit_codigo)
+        self.e_codigo2.grid(row=1, column=1)
 
                 # input codigo
-        Label(self.frame,text='Resultado:').grid(row=2, column=0)
-        self.e_resultado=Text(self.frame)
-        self.e_resultado.insert(INSERT,self.edit_resul)
-        self.e_resultado.grid(row=2, column=1)
+        Label(self.frame2,text='Resultado:').grid(row=2, column=0)
+        self.e_resultado2=Text(self.frame2)
+        self.e_resultado2.insert(INSERT,self.edit_resul)
+        self.e_resultado2.grid(row=2, column=1)
         #    ventana ver contenido
-        lb_b_e=Frame(self.frame)
-        lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
-        btn_editar=Button(lb_b_e,text='Aceptar')
-        btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+        lb_b_e2=Frame(self.frame2)
+        lb_b_e2.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+        btn_editar2=Button(lb_b_e2,text='Aceptar',command=self.guarda_edicion)
+        btn_editar2.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
 
     def menu_agrega_contenido(self):
         try:
@@ -228,17 +255,30 @@ class Encaython:
             query= "SELECT * FROM sql WHERE titulo = ?"
             self.fila_db=self.hacer_consluta(query,(parametros,))
             for fila in self.fila_db:
-                print(fila[1])
                 self.edit_tit=fila[1]
-                print(fila[2])
                 self.edit_codigo=fila[2]
-                print(fila[3])
                 self.edit_resul=fila[3]
             # showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
             self.obtener_titulos()
 
         except TclError:
             showerror(title='ERROR',message='No seleccionaste elemento de la lista')
+
+    def guarda_edicion(self):
+        try:
+            viejo_titulo=self.edit_tit
+            nuevo_titulo=self.e_titulo2.get()
+            nuevo_codigo=self.e_codigo2.get(1.0,END)
+            nuevo_resultado=self.e_resultado2.get(0.0,END)
+            print(nuevo_resultado)
+            parametros =(nuevo_titulo,nuevo_codigo,nuevo_resultado,viejo_titulo)
+            query="UPDATE sql SET titulo= ?, codigo= ?, resultado= ? WHERE titulo= ?"
+            self.hacer_consluta(query,parametros)
+            self.obtener_titulos()
+        except Error as e:
+            print(e)
+        contenedor2.destroy()
+        # TODO me quede en la consulta de actualizacion
 
 if __name__ == '__main__':
     ventana = Tk()
