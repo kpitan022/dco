@@ -1,3 +1,4 @@
+from sqlite3.dbapi2 import Error
 from tkinter import *
 from tkinter import ttk
 import sqlite3
@@ -33,7 +34,7 @@ class Encaython:
 
         #----------------aqui va el codigo (ejemplo de prueba)
         #  ventana cargar contenido
-
+        self.crea_tabla()
         self.menu() #llamo los botones de menu
 
     def menu(self):
@@ -72,11 +73,47 @@ class Encaython:
         #    ventana ver contenido
         self.listbox = Listbox(self.frame)
         self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
+        lb_b_e=Frame(self.frame)
+        lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+        btn_borrar=Button(lb_b_e,text='Borrar',command=self.borrar)
+        btn_borrar.grid(row=0,column=0,pady=5,padx=10,sticky=W+E+N+S)
+        btn_editar=Button(lb_b_e,text='Editar',command=self.menu_editar)
+        btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
 
 
-        self.crea_tabla()
         self.obtener_titulos()
+    
+    def menu_editar(self):
+        self.editar()
         
+        global editar
+        editar=Toplevel()
+        editar.title='Editar contenido'
+        self.frame=LabelFrame(editar, text='Editar contenido')
+        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        # input titulo
+        Label(self.frame,text='Titulo:').grid(row=0, column=0)
+        self.e_titulo=Entry(self.frame)
+        self.e_titulo.insert(0,self.edit_tit)
+        self.e_titulo.grid(row=0,column=1,sticky=W+E)
+        
+        # input codigo
+        Label(self.frame,text='Codigo:').grid(row=1, column=0)
+        self.e_codigo=Text(self.frame)
+        self.e_codigo.insert(INSERT,self.edit_codigo)
+        self.e_codigo.grid(row=1, column=1)
+
+                # input codigo
+        Label(self.frame,text='Resultado:').grid(row=2, column=0)
+        self.e_resultado=Text(self.frame)
+        self.e_resultado.insert(INSERT,self.edit_resul)
+        self.e_resultado.grid(row=2, column=1)
+        #    ventana ver contenido
+        lb_b_e=Frame(self.frame)
+        lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+        btn_editar=Button(lb_b_e,text='Aceptar')
+        btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+
     def menu_agrega_contenido(self):
         try:
             contenido.destroy()
@@ -110,7 +147,6 @@ class Encaython:
         self.listbox.grid(row=1,column=3,rowspan=3,sticky=W+E+N+S,padx=20)
 
 
-        self.crea_tabla()
         self.obtener_titulos()
 
     def hacer_consluta(self,query,parametros=()):
@@ -124,8 +160,9 @@ class Encaython:
         query='''
         CREATE TABLE IF NOT EXISTS "sql" (
             "id"	INTEGER NOT NULL,
-            "titulo"	TEXT,
-            "codigo"	TEXT,
+            "titulo"	TEXT NOT NULL,
+            "codigo"	TEXT NOT NULL,
+            "resultado"    TEXT,
             PRIMARY KEY("id" AUTOINCREMENT)
         )'''
         tabla_db=self.hacer_consluta(query)
@@ -145,14 +182,14 @@ class Encaython:
         return self.boxing
 
     def validacion(self):
-        return len(self.e_titulo.get()) !=0 and len(self.e_codigo.get(1.0,END)) !=0 
+        return ((len(self.e_titulo.get())) !=0 and (len(self.e_codigo.get(1.0,END)) !=1) )
     
     def agregar_contenido(self):
         # valido los campos
         if self.validacion():
             #genero la query
-            query= 'INSERT INTO sql VALUES(NULL,?,?)'
-            parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END))
+            query= 'INSERT INTO sql VALUES(NULL,?,?,?)'
+            parametros=(self.e_titulo.get(),self.e_codigo.get(1.0,END),self.e_resultado.get(1.0,END))
             self.hacer_consluta(query,parametros)
             self.obtener_titulos()
             showinfo(title='Agregar', message=f'{self.e_titulo.get()} agregado correctamente')
@@ -170,6 +207,38 @@ class Encaython:
         for lista in lista_tablas:
             print(lista)
 
+    def borrar(self):
+        try:
+            parametros= self.listbox.get(self.listbox.curselection())
+            query= "DELETE FROM sql WHERE titulo = ?"
+            self.hacer_consluta(query,(parametros,))
+            print(type(str(parametros,)))
+            showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
+            self.obtener_titulos()
+
+        except TclError:
+            showerror(title='ERROR',message='No seleccionaste elemento de la lista')
+        
+    def editar(self):
+        try:
+            self.edit_tit=''
+            self.edit_codigo=''
+            self.edit_resul=''
+            parametros= self.listbox.get(self.listbox.curselection())
+            query= "SELECT * FROM sql WHERE titulo = ?"
+            self.fila_db=self.hacer_consluta(query,(parametros,))
+            for fila in self.fila_db:
+                print(fila[1])
+                self.edit_tit=fila[1]
+                print(fila[2])
+                self.edit_codigo=fila[2]
+                print(fila[3])
+                self.edit_resul=fila[3]
+            # showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
+            self.obtener_titulos()
+
+        except TclError:
+            showerror(title='ERROR',message='No seleccionaste elemento de la lista')
 
 if __name__ == '__main__':
     ventana = Tk()
