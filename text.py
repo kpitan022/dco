@@ -15,30 +15,28 @@ class Encaython:
         #------- creamos canvas -------
         mi_canvas = Canvas(contenedor)
         mi_canvas.pack(side=LEFT,fill=BOTH,expand=1)
-
         # crea una barra de desplazamiento horizontal
         x_scroll = Scrollbar(ventana, orient=HORIZONTAL,command=mi_canvas.xview)
         # adjuntar barra de desplazamiento a la ventana raíz en
         x_scroll.pack(side=BOTTOM, fill=X)
-        
         # crear una barra de desplazamiento vertical
         y_scroll = Scrollbar(contenedor, orient=VERTICAL,command=mi_canvas.yview)
         y_scroll.pack(side=RIGHT, fill=Y)
-
         mi_canvas.configure(yscrollcommand=y_scroll.set,xscrollcommand=x_scroll.set)
-
         mi_canvas.bind('<Configure>', lambda e: mi_canvas.configure(scrollregion= mi_canvas.bbox('all')))
 
-        root= Frame(mi_canvas)
+        self.root= Frame(mi_canvas)
 
         # ---------- agregamos este ultimo self.frame al canvas
-        mi_canvas.create_window((0,0), window=root,anchor='nw')
-
+        mi_canvas.create_window((0,0), window=self.root,anchor='nw')
 
         #----------------aqui va el codigo (ejemplo de prueba)
         #  ventana cargar contenido
+        Button(self.root,text='Agregar Contenido',command=self.menu_contenido).grid(row=0, column=0,pady=5)
         
-        self.frame=LabelFrame(root, text='Cargar contenido')
+
+    def menu_contenido(self):
+        self.frame=LabelFrame(self.root, text='Cargar contenido')
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
         Label(self.frame,text='Titulo:').grid(row=0, column=0)
@@ -56,7 +54,6 @@ class Encaython:
         self.e_resultado=Text(self.frame)
         self.e_resultado.grid(row=2, column=1)
 
-        Button(root,text='Agregar Contenido',command=self.menu_contenido).grid(row=0, column=0,pady=5)
         Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
 
         # mensajes
@@ -70,10 +67,6 @@ class Encaython:
 
         self.crea_tabla()
         self.obtener_titulos()
-
-    def menu_contenido(self):
-        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
-
 
     def hacer_consluta(self,query,parametros=()):
         conn=sqlite3.connect(self.db_name)
