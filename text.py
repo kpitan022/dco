@@ -32,10 +32,57 @@ class Encaython:
 
         #----------------aqui va el codigo (ejemplo de prueba)
         #  ventana cargar contenido
-        Button(self.root,text='Agregar Contenido',command=self.menu_contenido).grid(row=0, column=0,pady=5)
-        
 
+        # botones futuro menu 
+        # menu=Frame(self.root)
+        # menu.grid(row=0, column=0,sticky=W)
+        # agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
+        # agrega.grid(row=1,column=0,pady=5,sticky=W)
+        # conten=Button(menu,text='Ver Contenido',command=self.menu_contenido)
+        # conten.grid(row=1, column=1,pady=5,sticky=W)
+        self.menu()
+
+    def menu(self):
+        menu=Frame(self.root)
+        menu.grid(row=0, column=0,sticky=W)
+        agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
+        agrega.grid(row=1,column=0,pady=5,sticky=W)
+        conten=Button(menu,text='Ver Contenido',command=self.menu_contenido)
+        conten.grid(row=1, column=1,pady=5,sticky=W)
+        
     def menu_contenido(self):
+        self.frame=LabelFrame(self.root, text='Ver contenido')
+        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        # input titulo
+        Label(self.frame,text='Titulo:').grid(row=0, column=0)
+        self.e_titulo=Entry(self.frame,state='disabled',disabledbackground='gray')
+        self.e_titulo.grid(row=0,column=1,sticky=W+E)
+        
+        # input codigo
+        Label(self.frame,text='Codigo:').grid(row=1, column=0)
+        self.e_codigo=Text(self.frame,state='disabled',bg='gray')
+        self.e_codigo.grid(row=1, column=1)
+
+                # input codigo
+        Label(self.frame,text='Resultado:').grid(row=2, column=0)
+        self.e_resultado=Text(self.frame,state='disabled',bg='gray')
+        self.e_resultado.grid(row=2, column=1)
+
+        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=4, columnspan=2,pady=5,sticky=W+E)
+
+        # mensajes
+        self.mensaje=Label(self.frame,text='',fg='red',anchor=CENTER)
+        self.mensaje.grid(row=100,column=0,sticky=W+E,columnspan=2)
+
+        #    ventana ver contenido
+        self.listbox = Listbox(self.frame)
+        self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
+
+
+        self.crea_tabla()
+        self.obtener_titulos()
+    
+    def menu_agrega_contenido(self):
         self.frame=LabelFrame(self.root, text='Cargar contenido')
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
