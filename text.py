@@ -55,91 +55,157 @@ class Encaython:
         global contenido
         contenido=Frame(self.root)
         contenido.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        
         self.frame=LabelFrame(contenido, text='Ver contenido')
         self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
-        # input titulo
-        Label(self.frame,text='Titulo:').grid(row=0, column=0)
-        self.e_titulo=Entry(self.frame,state='disabled',disabledbackground='gray')
-        self.e_titulo.grid(row=0,column=1,sticky=W+E)
-        
-        # input codigo
-        Label(self.frame,text='Codigo:').grid(row=1, column=0)
-        self.e_codigo=Text(self.frame,state='disabled',bg='gray')
-        self.e_codigo.grid(row=1, column=1)
 
-                # input codigo
-        Label(self.frame,text='Resultado:').grid(row=2, column=0)
-        self.e_resultado=Text(self.frame,state='disabled',bg='gray')
-        self.e_resultado.grid(row=2, column=1)
-        #    ventana ver contenido
-        self.listbox = Listbox(self.frame)
+        self.framelist=Frame(self.frame)
+        self.framelist.grid(row=0,column=0,sticky=W+E+N+S)
+
+        self.framedatos=Frame(self.frame)
+        self.framedatos.grid(row=0,column=1,sticky=W+E)
+
+        self.lb_titu=Label(self.framedatos,text='Haz "Doble Click" sobre los elementos de la lista')
+        self.lb_titu.grid(row=0, column=0)
+        
+        
+
+        self.listbox = Listbox(self.framelist)
         self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
-        lb_b_e=Frame(self.frame)
+
+        #    ventana ver contenido
+        
+        lb_b_e=Frame(self.framelist)
         lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
         btn_borrar=Button(lb_b_e,text='Borrar',command=self.borrar)
         btn_borrar.grid(row=0,column=0,pady=5,padx=10,sticky=W+E+N+S)
         btn_editar=Button(lb_b_e,text='Editar',command=self.menu_editar)
         btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
-
-
+        # ver= self.listbox.get(self.listbox.curselection())
         self.obtener_titulos()
-    
-    def menu_editar(self):
-        self.editar()
-        global contenedor2
-        contenedor2=Toplevel()
-        contenedor2.title='Editar contenido'
-
-        contenedor2.grid()
-
-        #------- creamos canvas -------
-        mi_canvas = Canvas(contenedor2)
-        mi_canvas.pack(side=LEFT,fill=BOTH,expand=1)
+        self.listbox.bind("<Double-Button-1>",self.prueba)
+        lb_ver=Label(self.framedatos)
+        lb_ver.grid(row=3,column=2)
+        contenido.mainloop()
 
 
-        # ------- agregamos Scrollbar  a canvas 
+    def prueba(self,*args):
+        
+        try:
+            self.edit_tit=''
+            self.edit_codigo=''
+            self.edit_resul=''
+            parametros= self.listbox.get(self.listbox.curselection())
+            query= "SELECT * FROM sql WHERE titulo = ?"
+            self.fila_db=self.hacer_consluta(query,(parametros,))
+            for fila in self.fila_db:
+                self.edit_tit=fila[1]
+                self.edit_codigo=fila[2]
+                self.edit_resul=fila[3]
+            
+        except:
+            pass
+            
 
-        mi_scrollbar = ttk.Scrollbar(contenedor2, orient=VERTICAL,command=mi_canvas.yview)
-        mi_scrollbar.pack(side=RIGHT, fill=Y)
-
-
-        #--------- configuro canvas ----
-        mi_canvas.configure(yscrollcommand=mi_scrollbar.set)
-        mi_canvas.bind('<Configure>', lambda e: mi_canvas.configure(scrollregion= mi_canvas.bbox('all')))
-
-        # ---------- creamos otro frame dentro de canvas
-        root= Frame(mi_canvas)
-
-        # ---------- agregamos este ultimo frame al canvas
-        mi_canvas.create_window((0,0), window=root,anchor='nw')
-
-
-        #----------------aqui va el codigo (ejemplo de prueba)
-
-        self.frame2=LabelFrame(root, text='Editar contenido')
-        self.frame2.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         # input titulo
-        Label(self.frame2,text='Titulo:').grid(row=0, column=0)
-        self.e_titulo2=Entry(self.frame2)
-        self.e_titulo2.insert(0,self.edit_tit)
-        self.e_titulo2.grid(row=0,column=1,sticky=W+E)
+        self.lb_titu['text']='Titulo'
+        self.e_titulo=Entry(self.framedatos,bg='gray')
+        self.e_titulo.insert(INSERT,self.edit_tit)
+        self.e_titulo.bind("<Key>", lambda a: "break")
+        self.e_titulo.grid(row=0,column=1,sticky=W+E)
+        
         
         # input codigo
-        Label(self.frame2,text='Codigo:').grid(row=1, column=0)
-        self.e_codigo2=Text(self.frame2)
-        self.e_codigo2.insert(INSERT,self.edit_codigo)
-        self.e_codigo2.grid(row=1, column=1)
+        Label(self.framedatos,text='Codigo:').grid(row=1, column=0)
+        self.e_codigo=Text(self.framedatos,bg='gray')
+        self.e_codigo.insert(INSERT,self.edit_codigo)
+        self.e_codigo.bind("<Key>", lambda a: "break")
+        self.e_codigo.grid(row=1, column=1)
 
                 # input codigo
-        Label(self.frame2,text='Resultado:').grid(row=2, column=0)
-        self.e_resultado2=Text(self.frame2)
-        self.e_resultado2.insert(INSERT,self.edit_resul)
-        self.e_resultado2.grid(row=2, column=1)
-        #    ventana ver contenido
-        lb_b_e2=Frame(self.frame2)
-        lb_b_e2.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
-        btn_editar2=Button(lb_b_e2,text='Aceptar',command=self.guarda_edicion)
-        btn_editar2.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+        Label(self.framedatos,text='Resultado:').grid(row=2, column=0)
+        self.e_resultado=Text(self.framedatos,bg='gray')
+        self.e_resultado.insert(INSERT,self.edit_resul)
+        self.e_resultado.bind("<Key>", lambda a: "break")
+        self.e_resultado.grid(row=2, column=1)
+        
+    
+
+    def menu_editar(self):
+        try:
+            self.edit_tit=''
+            self.edit_codigo=''
+            self.edit_resul=''
+            parametros= self.listbox.get(self.listbox.curselection())
+            query= "SELECT * FROM sql WHERE titulo = ?"
+            self.fila_db=self.hacer_consluta(query,(parametros,))
+            for fila in self.fila_db:
+                self.edit_tit=fila[1]
+                self.edit_codigo=fila[2]
+                self.edit_resul=fila[3]
+            global contenedor2
+            contenedor2=Toplevel()
+            contenedor2.title='Editar contenido'
+
+            contenedor2.grid()
+
+            #------- creamos canvas -------
+            mi_canvas = Canvas(contenedor2)
+            mi_canvas.pack(side=LEFT,fill=BOTH,expand=1)
+
+
+            # ------- agregamos Scrollbar  a canvas 
+
+            mi_scrollbar = ttk.Scrollbar(contenedor2, orient=VERTICAL,command=mi_canvas.yview)
+            mi_scrollbar.pack(side=RIGHT, fill=Y)
+
+
+            #--------- configuro canvas ----
+            mi_canvas.configure(yscrollcommand=mi_scrollbar.set)
+            mi_canvas.bind('<Configure>', lambda e: mi_canvas.configure(scrollregion= mi_canvas.bbox('all')))
+
+            # ---------- creamos otro frame dentro de canvas
+            root= Frame(mi_canvas)
+
+            # ---------- agregamos este ultimo frame al canvas
+            mi_canvas.create_window((0,0), window=root,anchor='nw')
+
+
+            #----------------aqui va el codigo (ejemplo de prueba)
+
+            self.frame2=LabelFrame(root, text='Editar contenido')
+            self.frame2.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+            # input titulo
+            Label(self.frame2,text='Titulo:').grid(row=0, column=0)
+            self.e_titulo2=Entry(self.frame2)
+            self.e_titulo2.insert(0,self.edit_tit)
+            self.e_titulo2.grid(row=0,column=1,sticky=W+E)
+            
+            # input codigo
+            Label(self.frame2,text='Codigo:').grid(row=1, column=0)
+            self.e_codigo2=Text(self.frame2)
+            self.e_codigo2.insert(INSERT,self.edit_codigo)
+            self.e_codigo2.grid(row=1, column=1)
+
+                    # input codigo
+            Label(self.frame2,text='Resultado:').grid(row=2, column=0)
+            self.e_resultado2=Text(self.frame2)
+            self.e_resultado2.insert(INSERT,self.edit_resul)
+            self.e_resultado2.grid(row=2, column=1)
+            #    ventana ver contenido
+            lb_b_e2=Frame(self.frame2)
+            lb_b_e2.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+            btn_editar2=Button(lb_b_e2,text='Aceptar',command=self.guarda_edicion)
+            btn_editar2.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+
+            # showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
+            self.obtener_titulos()
+
+        except TclError:
+            showerror(title='ERROR',message='No seleccionaste elemento de la lista')
+
+        # self.editar()
+        
 
     def menu_agrega_contenido(self):
         try:
@@ -246,23 +312,6 @@ class Encaython:
         except TclError:
             showerror(title='ERROR',message='No seleccionaste elemento de la lista')
         
-    def editar(self):
-        try:
-            self.edit_tit=''
-            self.edit_codigo=''
-            self.edit_resul=''
-            parametros= self.listbox.get(self.listbox.curselection())
-            query= "SELECT * FROM sql WHERE titulo = ?"
-            self.fila_db=self.hacer_consluta(query,(parametros,))
-            for fila in self.fila_db:
-                self.edit_tit=fila[1]
-                self.edit_codigo=fila[2]
-                self.edit_resul=fila[3]
-            # showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
-            self.obtener_titulos()
-
-        except TclError:
-            showerror(title='ERROR',message='No seleccionaste elemento de la lista')
 
     def guarda_edicion(self):
         try:
@@ -275,6 +324,7 @@ class Encaython:
             query="UPDATE sql SET titulo= ?, codigo= ?, resultado= ? WHERE titulo= ?"
             self.hacer_consluta(query,parametros)
             self.obtener_titulos()
+            showinfo(title='Borrar',message=f'{nuevo_titulo} editado correctamente')
         except Error as e:
             print(e)
         contenedor2.destroy()
