@@ -39,14 +39,7 @@ class Encaython:
         self.menu() #llamo los botones de menu
         # self.menu_contenido()
         #-------aca van los colores
-        try:
-            self.framedatos.configure(bg='orange')
-            contenedor.configure(bg='blue')
-            self.fondo='red'
-            self.root.configure(bg='yellow')
-        except :
-            pass
-        
+
 
     def menu(self):
         menu=Frame(self.root)
