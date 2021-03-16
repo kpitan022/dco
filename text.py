@@ -36,18 +36,18 @@ class Encaython:
         #----------------aqui va el codigo (ejemplo de prueba)
         #  ventana cargar contenido
         self.crea_tabla()
-        self.menu() #llamo los botones de menu
-        # self.menu_contenido()
+        # self.menu() #llamo los botones de menu
+        self.menu_contenido()
         #-------aca van los colores
 
 
-    def menu(self):
-        menu=Frame(self.root)
-        menu.grid(row=0, column=0,sticky=W)
-        agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
-        agrega.grid(row=1,column=0,pady=5,sticky=W)
-        conten=Button(menu,text='Ver Contenido',command=self.menu_contenido)
-        conten.grid(row=1, column=1,pady=5,sticky=W)
+    # def menu(self):
+        # menu=Frame(self.root)
+        # menu.grid(row=0, column=0,sticky=W)
+        # agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
+        # agrega.grid(row=1,column=0,pady=5,sticky=W)
+        # conten=Button(menu,text='Ver Contenido',command=self.menu_contenido)
+        # conten.grid(row=1, column=1,pady=5,sticky=W)
         
     def menu_contenido(self):
         try:
@@ -56,13 +56,13 @@ class Encaython:
             pass
         global contenido
         contenido=Frame(self.root)
-        contenido.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        contenido.grid(row=1, column=0,pady=20,padx=20,sticky=W+E+N+S)
         
         self.frame=LabelFrame(contenido, text='Ver contenido')
-        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20,sticky=W+E+N+S)
+        self.frame.grid(row=1, column=0,pady=20,padx=20,sticky=W+E+N+S)
 
-        self.framelist=Frame(self.frame)
-        self.framelist.grid(row=0,column=0,rowspan=3,sticky=W+E+N+S)
+        self.framelist=Frame(self.frame,width=1600)
+        self.framelist.grid(row=0,column=0,sticky=W+E+N+S)
 
         self.framedatos=Frame(self.frame)
         self.framedatos.grid(row=0,column=1,sticky=W+E)
@@ -71,23 +71,30 @@ class Encaython:
         self.lb_titu.grid(row=0, column=0)
 
         scrollbar = Scrollbar(self.framelist, orient=VERTICAL)
-        scrollbar.grid(row=1,column=0,rowspan=2,sticky=W+E+N+S,padx=20)
+        scrollbar.grid(row=1,column=0,rowspan=5,sticky=N+S,padx=20)
         # Vincularla con la lista.
         self.listbox =Listbox(self.framelist, yscrollcommand=scrollbar.set)
 
-        self.listbox.grid(row=1,column=4,rowspan=2,sticky=W+E+N+S,padx=20)
+        self.listbox.grid(row=1,column=4,rowspan=5,sticky=N+S,padx=20)
+
         scrollbar.config(command=self.listbox.yview)
         #    ventana ver contenido
         
         lb_b_e=Frame(self.framelist)
-        lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+        lb_b_e.grid(row=0,column=3, columnspan=4,pady=5,padx=10,sticky=W+E+N+S)
         btn_borrar=Button(lb_b_e,text='Borrar',command=self.borrar)
-        btn_borrar.grid(row=0,column=0,pady=5,padx=10,sticky=W+E+N+S)
+        btn_borrar.grid(row=0,column=0,pady=5,padx=5,sticky=W+E+N+S)
         btn_editar=Button(lb_b_e,text='Editar',command=self.menu_editar)
-        btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+        btn_editar.grid(row=0,column=1,pady=5,padx=5,sticky=W+E+N+S)
+        btn_agregar=Button(lb_b_e,text='Agregar',command=self.menu_agrega_contenido)
+        btn_agregar.grid(row=0,column=2,pady=5,padx=5,sticky=W+E+N+S)
         # ver= self.listbox.get(self.listbox.curselection())
         self.obtener_titulos()
-        self.listbox.bind("<Double-Button-1>",self.prueba)
+        #  funcion doble click sobre el listbox 
+        # self.listbox.bind("<Double-Button-1>",self.prueba)
+
+        #  funcion simple click sobre el listbox 
+        self.listbox.bind('<<ListboxSelect>>',self.prueba)
         lb_ver=Label(self.framedatos)
         lb_ver.grid(row=3,column=2)
         contenido.mainloop()
@@ -232,7 +239,16 @@ class Encaython:
         self.e_resultado=Text(self.frame)
         self.e_resultado.grid(row=2, column=1)
 
-        Button(self.frame,text='Agregar',command=self.agregar_contenido).grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E)
+
+        self.btones=Frame(self.frame)
+        self.btones.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E)
+
+        btn_agregar=Button(self.btones,text='Agregar',command=self.agregar_contenido)
+        btn_agregar.grid(row=0,column=0,pady=5,padx=5,sticky=W+E)
+        btn_contenido=Button(self.btones,text='Contenido',command=self.menu_contenido)
+        btn_contenido.grid(row=0,column=1,pady=5,padx=5,sticky=W+E)
+        btn_editar=Button(self.btones,text='Editar',command=self.menu_contenido)
+        btn_editar.grid(row=0,column=3,pady=5,padx=5,sticky=W+E)
 
         #    ventana ver contenido
         self.listbox = Listbox(self.frame)
