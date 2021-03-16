@@ -25,7 +25,7 @@ class Encaython:
         # crear una barra de desplazamiento vertical
         y_scroll = Scrollbar(contenedor, orient=VERTICAL,command=mi_canvas.yview)
         y_scroll.pack(side=RIGHT, fill=Y)
-        mi_canvas.configure(yscrollcommand=y_scroll.set,xscrollcommand=x_scroll.set)
+        mi_canvas.configure(yscrollcommand=y_scroll.set,xscrollcommand=x_scroll.set,)
         mi_canvas.bind('<Configure>', lambda e: mi_canvas.configure(scrollregion= mi_canvas.bbox('all')))
 
         self.root= Frame(mi_canvas)
@@ -37,9 +37,18 @@ class Encaython:
         #  ventana cargar contenido
         self.crea_tabla()
         self.menu() #llamo los botones de menu
+        # self.menu_contenido()
+        #-------aca van los colores
+        try:
+            self.framedatos.configure(bg='orange')
+            contenedor.configure(bg='blue')
+            self.fondo='red'
+            self.root.configure(bg='yellow')
+        except :
+            pass
+        
 
     def menu(self):
-        
         menu=Frame(self.root)
         menu.grid(row=0, column=0,sticky=W)
         agrega=Button(menu,text='Agregar Contenido',command=self.menu_agrega_contenido)
@@ -50,29 +59,31 @@ class Encaython:
     def menu_contenido(self):
         try:
             agrega.destroy()
-        except:
+        except :
             pass
         global contenido
         contenido=Frame(self.root)
         contenido.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
         
         self.frame=LabelFrame(contenido, text='Ver contenido')
-        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+        self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20,sticky=W+E+N+S)
 
         self.framelist=Frame(self.frame)
-        self.framelist.grid(row=0,column=0,sticky=W+E+N+S)
+        self.framelist.grid(row=0,column=0,rowspan=3,sticky=W+E+N+S)
 
         self.framedatos=Frame(self.frame)
         self.framedatos.grid(row=0,column=1,sticky=W+E)
 
         self.lb_titu=Label(self.framedatos,text='Haz "Doble Click" sobre los elementos de la lista')
         self.lb_titu.grid(row=0, column=0)
-        
-        
 
-        self.listbox = Listbox(self.framelist)
-        self.listbox.grid(row=1,column=3,rowspan=2,sticky=W+E+N+S,padx=20)
+        scrollbar = Scrollbar(self.framelist, orient=VERTICAL)
+        scrollbar.grid(row=1,column=0,rowspan=2,sticky=W+E+N+S,padx=20)
+        # Vincularla con la lista.
+        self.listbox =Listbox(self.framelist, yscrollcommand=scrollbar.set)
 
+        self.listbox.grid(row=1,column=4,rowspan=2,sticky=W+E+N+S,padx=20)
+        scrollbar.config(command=self.listbox.yview)
         #    ventana ver contenido
         
         lb_b_e=Frame(self.framelist)
@@ -87,7 +98,6 @@ class Encaython:
         lb_ver=Label(self.framedatos)
         lb_ver.grid(row=3,column=2)
         contenido.mainloop()
-
 
     def prueba(self,*args):
         
@@ -129,8 +139,6 @@ class Encaython:
         self.e_resultado.bind("<Key>", lambda a: "break")
         self.e_resultado.grid(row=2, column=1)
         
-    
-
     def menu_editar(self):
         try:
             self.edit_tit=''
@@ -143,20 +151,20 @@ class Encaython:
                 self.edit_tit=fila[1]
                 self.edit_codigo=fila[2]
                 self.edit_resul=fila[3]
-            global contenedor2
-            contenedor2=Toplevel()
-            contenedor2.title='Editar contenido'
+            global contenedor
+            contenedor=Toplevel()
+            contenedor.title='Editar contenido'
 
-            contenedor2.grid()
+            contenedor.grid()
 
             #------- creamos canvas -------
-            mi_canvas = Canvas(contenedor2)
+            mi_canvas = Canvas(contenedor)
             mi_canvas.pack(side=LEFT,fill=BOTH,expand=1)
 
 
             # ------- agregamos Scrollbar  a canvas 
 
-            mi_scrollbar = ttk.Scrollbar(contenedor2, orient=VERTICAL,command=mi_canvas.yview)
+            mi_scrollbar = ttk.Scrollbar(contenedor, orient=VERTICAL,command=mi_canvas.yview)
             mi_scrollbar.pack(side=RIGHT, fill=Y)
 
 
@@ -173,40 +181,38 @@ class Encaython:
 
             #----------------aqui va el codigo (ejemplo de prueba)
 
-            self.frame2=LabelFrame(root, text='Editar contenido')
-            self.frame2.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
+            self.frame=LabelFrame(root, text='Editar contenido')
+            self.frame.grid(row=1, column=0,columnspan=3,pady=20,padx=20)
             # input titulo
-            Label(self.frame2,text='Titulo:').grid(row=0, column=0)
-            self.e_titulo2=Entry(self.frame2)
-            self.e_titulo2.insert(0,self.edit_tit)
-            self.e_titulo2.grid(row=0,column=1,sticky=W+E)
+            Label(self.frame,text='Titulo:').grid(row=0, column=0)
+            self.e_titulo=Entry(self.frame)
+            self.e_titulo.insert(0,self.edit_tit)
+            self.e_titulo.grid(row=0,column=1,sticky=W+E)
             
             # input codigo
-            Label(self.frame2,text='Codigo:').grid(row=1, column=0)
-            self.e_codigo2=Text(self.frame2)
-            self.e_codigo2.insert(INSERT,self.edit_codigo)
-            self.e_codigo2.grid(row=1, column=1)
+            Label(self.frame,text='Codigo:').grid(row=1, column=0)
+            self.e_codigo=Text(self.frame)
+            self.e_codigo.insert(INSERT,self.edit_codigo)
+            self.e_codigo.grid(row=1, column=1)
 
                     # input codigo
-            Label(self.frame2,text='Resultado:').grid(row=2, column=0)
-            self.e_resultado2=Text(self.frame2)
-            self.e_resultado2.insert(INSERT,self.edit_resul)
-            self.e_resultado2.grid(row=2, column=1)
+            Label(self.frame,text='Resultado:').grid(row=2, column=0)
+            self.e_resultado=Text(self.frame)
+            self.e_resultado.insert(INSERT,self.edit_resul)
+            self.e_resultado.grid(row=2, column=1)
             #    ventana ver contenido
-            lb_b_e2=Frame(self.frame2)
-            lb_b_e2.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
-            btn_editar2=Button(lb_b_e2,text='Aceptar',command=self.guarda_edicion)
-            btn_editar2.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
+            lb_b_e=Frame(self.frame)
+            lb_b_e.grid(row=0,column=3, columnspan=2,pady=5,padx=10,sticky=W+E+N+S)
+            btn_editar=Button(lb_b_e,text='Aceptar',command=self.guarda_edicion)
+            btn_editar.grid(row=0,column=1,pady=5,padx=10,sticky=W+E+N+S)
 
             # showinfo(title='Borrar',message=f'{parametros} borrado correctamente')
             self.obtener_titulos()
-
         except TclError:
             showerror(title='ERROR',message='No seleccionaste elemento de la lista')
 
         # self.editar()
         
-
     def menu_agrega_contenido(self):
         try:
             contenido.destroy()
@@ -312,13 +318,12 @@ class Encaython:
         except TclError:
             showerror(title='ERROR',message='No seleccionaste elemento de la lista')
         
-
     def guarda_edicion(self):
         try:
             viejo_titulo=self.edit_tit
-            nuevo_titulo=self.e_titulo2.get()
-            nuevo_codigo=self.e_codigo2.get(1.0,END)
-            nuevo_resultado=self.e_resultado2.get(0.0,END)
+            nuevo_titulo=self.e_titulo.get()
+            nuevo_codigo=self.e_codigo.get(1.0,END)
+            nuevo_resultado=self.e_resultado.get(0.0,END)
             print(nuevo_resultado)
             parametros =(nuevo_titulo,nuevo_codigo,nuevo_resultado,viejo_titulo)
             query="UPDATE sql SET titulo= ?, codigo= ?, resultado= ? WHERE titulo= ?"
@@ -327,7 +332,7 @@ class Encaython:
             showinfo(title='Borrar',message=f'{nuevo_titulo} editado correctamente')
         except Error as e:
             print(e)
-        contenedor2.destroy()
+        contenedor.destroy()
         # TODO me quede en la consulta de actualizacion
 
 if __name__ == '__main__':
